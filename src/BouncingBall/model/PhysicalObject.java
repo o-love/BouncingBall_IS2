@@ -1,5 +1,7 @@
 package BouncingBall.model;
 
+import BouncingBall.base.events.NotifyEvent;
+
 public interface PhysicalObject {
     void apply(double timeDelta);
 
@@ -14,4 +16,6 @@ public interface PhysicalObject {
 
     void velocityX(double velocity);
     void velocityY(double velocity);
+
+    void onChange(NotifyEvent notifyEvent);
 }

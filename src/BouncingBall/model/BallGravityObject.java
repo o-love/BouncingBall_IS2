@@ -1,5 +1,7 @@
 package BouncingBall.model;
 
+import BouncingBall.base.events.NotifyEvent;
+
 import static BouncingBall.base.MathUtils.root;
 
 public class BallGravityObject implements GravityObject {
@@ -11,6 +13,7 @@ public class BallGravityObject implements GravityObject {
     private double y;
     private double velocityX;
     private double velocityY;
+    private NotifyEvent notifyEvent;
 
     public static BallGravityObject create(double x, double y, double elasticity, double radius) {
         return new BallGravityObject(x, y, elasticity, radius);
@@ -20,9 +23,11 @@ public class BallGravityObject implements GravityObject {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.elasticity = elasticity;
+
         this.velocityY = 0f;
         this.velocityX = 0f;
-        this.elasticity = elasticity;
+        this.notifyEvent = NotifyEvent.NULL;
     }
 
     @Override
@@ -34,6 +39,8 @@ public class BallGravityObject implements GravityObject {
         }
 
         addGravity(timeDelta);
+
+        this.notifyEvent.handle();
     }
 
     private void applyToPosition(double timeDelta) {
@@ -118,5 +125,10 @@ public class BallGravityObject implements GravityObject {
     @Override
     public void velocityY(double velocity) {
         this.velocityY = velocity;
+    }
+
+    @Override
+    public void onChange(NotifyEvent notifyEvent) {
+        this.notifyEvent = notifyEvent;
     }
 }
