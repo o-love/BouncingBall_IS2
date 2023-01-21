@@ -2,9 +2,7 @@ package BouncingBall.model;
 
 import BouncingBall.base.events.NotifyEvent;
 
-public interface PhysicalObject {
-    void apply(double timeDelta);
-
+public interface PhysicalObject extends Simulation.Behavior {
     double x();
     double y();
 
