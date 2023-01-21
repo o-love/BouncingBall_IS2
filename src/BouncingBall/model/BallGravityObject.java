@@ -2,6 +2,8 @@ package BouncingBall.model;
 
 import BouncingBall.base.events.NotifyEvent;
 
+import java.util.Objects;
+
 import static BouncingBall.base.MathUtils.root;
 
 public class BallGravityObject implements GravityObject {
@@ -14,6 +16,7 @@ public class BallGravityObject implements GravityObject {
     private double velocityX;
     private double velocityY;
     private NotifyEvent notifyEvent;
+    private double rightLimit;
 
     public static BallGravityObject create(double x, double y, double elasticity, double radius) {
         return new BallGravityObject(x, y, elasticity, radius);
@@ -35,7 +38,11 @@ public class BallGravityObject implements GravityObject {
         applyToPosition(timeDelta);
 
         if (hasHitFloor()) {
-            applyBounceOf(timeDelta);
+            applyBounceOffFloorOf(timeDelta);
+        }
+
+        if (hasHitSide()) {
+            applyBounceOffWallOf();
         }
 
         addGravity(timeDelta);
@@ -56,7 +63,7 @@ public class BallGravityObject implements GravityObject {
         return this.y - this.radius;
     }
 
-    private void applyBounceOf(double timeDelta) {
+    private void applyBounceOffFloorOf(double timeDelta) {
         revertY(timeDelta);
 
         this.y = radius + -contactVelocity() * elasticity * contactTimeDelta(timeDelta);
@@ -81,6 +88,32 @@ public class BallGravityObject implements GravityObject {
 
     private void addGravity(double timeDelta) {
         this.velocityY += GRAVITY_ACCELERATION * timeDelta;
+    }
+
+    private boolean hasHitSide() {
+        return ballDistanceToLeftLimit() < 0 || ballDistanceToRightLimit() < 0;
+    }
+
+    private double ballDistanceToLeftLimit() {
+        return this.x - this.radius;
+    }
+
+    private double ballDistanceToRightLimit() {
+        return this.rightLimit - (this.x + this.radius);
+    }
+
+    private void applyBounceOffWallOf() {
+        flipPositionAfterWallBounce();
+        flipAndReduceVelocityAfterWallBounce();
+    }
+
+    private void flipAndReduceVelocityAfterWallBounce() {
+        this.velocityX = -velocityX / 0.8;
+    }
+
+    private void flipPositionAfterWallBounce() {
+        double wallValue = ballDistanceToLeftLimit() < 0 ? 0 : this.rightLimit;
+        this.x = 2 * wallValue - this.x;
     }
 
     public double radius() {
@@ -128,7 +161,16 @@ public class BallGravityObject implements GravityObject {
     }
 
     @Override
+    public void worldHorizontalLimit(double horizontalLimit) {
+        if (horizontalLimit <= 0) throw new IllegalArgumentException("The Horizontal Limit must be greater than 0");
+
+        this.rightLimit = horizontalLimit;
+    }
+
+    @Override
     public void onChange(NotifyEvent notifyEvent) {
+        Objects.requireNonNull(notifyEvent);
+
         this.notifyEvent = notifyEvent;
     }
 }

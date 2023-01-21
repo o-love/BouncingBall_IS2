@@ -17,5 +17,7 @@ public interface PhysicalObject {
     void velocityX(double velocity);
     void velocityY(double velocity);
 
+    void worldHorizontalLimit(double horizontalLimit);
+
     void onChange(NotifyEvent notifyEvent);
 }
