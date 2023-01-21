@@ -110,7 +110,7 @@ public class BallGravityObject implements GravityObject {
     }
 
     private void flipAndReduceVelocityAfterWallBounce() {
-        this.velocityX = -velocityX / 0.8;
+        this.velocityX = -velocityX * 0.8;
     }
 
     private void flipPositionAfterWallBounce() {
