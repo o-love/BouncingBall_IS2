@@ -15,8 +15,10 @@ public class BallGravityObject implements GravityObject {
     private double y;
     private double velocityX;
     private double velocityY;
-    private NotifyEvent notifyEvent;
     private double rightLimit;
+
+    private NotifyEvent notifyEvent;
+
 
     public static BallGravityObject create(double x, double y, double elasticity, double radius) {
         return new BallGravityObject(x, y, elasticity, radius);
@@ -114,6 +116,16 @@ public class BallGravityObject implements GravityObject {
     private void flipPositionAfterWallBounce() {
         double wallValue = ballDistanceToLeftLimit() < 0 ? 0 : this.rightLimit;
         this.x = 2 * wallValue - this.x;
+
+        ensureMinimumSeparationFromBorder();
+    }
+
+    private void ensureMinimumSeparationFromBorder() {
+        if (ballDistanceToLeftLimit() < 0) {
+            this.x = this.radius;
+        } else if (ballDistanceToRightLimit() < 0) {
+            this.x = this.rightLimit - this.radius;
+        }
     }
 
     public double radius() {
@@ -133,11 +145,15 @@ public class BallGravityObject implements GravityObject {
     @Override
     public void x(double x) {
         this.x = x;
+
+        this.notifyEvent.handle();
     }
 
     @Override
     public void y(double y) {
         this.y = y;
+
+        this.notifyEvent.handle();
     }
 
     @Override

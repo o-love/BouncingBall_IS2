@@ -5,6 +5,7 @@ import java.util.*;
 public interface Simulation {
 
     void addBehavior(Behavior behavior);
+    void removeBehavior(Behavior behavior);
 
     interface Behavior {
         void apply(double timeDelta);
@@ -22,6 +23,11 @@ public interface Simulation {
             @Override
             public void addBehavior(Behavior behavior) {
                 this.behaviors.add(behavior);
+            }
+
+            @Override
+            public void removeBehavior(Behavior behavior) {
+                this.behaviors.remove(behavior);
             }
 
             private TimerTask worldUpdater() {
